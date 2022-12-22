@@ -46,6 +46,13 @@ class PostController extends Controller
         $post->body = $request->body;
         // 認証済みのログイン中のユーザid↓
         $post->user_id = auth()->user()->id;
+
+        if (request('image')) {
+            $original = request()->file('image')->getClientOriginalName();
+            $name = date('Y-m-d') . '_' . $original;
+            request()->file('image')->move('storage/images', $name);
+            $post->image = $name;
+        }
         $post->save();
 
         return redirect()->route('post.create')->with('message', '投稿を作成しました');
